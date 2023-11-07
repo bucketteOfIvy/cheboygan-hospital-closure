@@ -1,0 +1,97 @@
+---
+title: "Testing Data Pull"
+output: html_notebook
+---
+
+
+```{r}
+library(tidycensus)
+library(tigris)
+library(tidyverse) # I hate myself.
+library(sf)
+library(tmap)
+tmap_mode('view')
+```
+
+```{r}
+
+test <- tigris::county_subdivisions("MI")
+cnts <- tigris::counties("MI")
+
+tm_shape(cnts) + tm_fill("MAP_COLORS", alpha=.5) + tm_shape(test) + tm_borders()
+
+tm_shape(test) + tm_borders() + tm_fill(alpha=.5)
+
+# Kings, CA
+# Tulare, CA
+```
+
+```{r}
+mi_2010_raw <- get_flows(geography = 'county subdivision',
+                  state = 'MI',
+                  county = 'Cheboygan',
+                  output = 'wide',
+                  year=2012)
+
+mi_2010_sum <- mi_2010_raw |> 
+  group_by(GEOID1) |> 
+  summarize(MOVEDOUT_M = sum(MOVEDOUT_M, na.rm=TRUE),
+            MOVEDIN = sum(MOVEDIN, na.rm=TRUE),
+            MOVEDOUT = sum(MOVEDOUT, na.rm=TRUE),
+            MOVEDNET = sum(MOVEDNET, na.rm=TRUE),
+            MOVEDNET_M = sum(MOVEDNET_M, na.rm=TRUE))
+
+csd <- tigris::county_subdivisions(state="MI")
+
+mi_2010_spat <- merge(csd, mi_2010_sum, by.x = 'GEOID', by.y = 'GEOID1')
+
+tm_shape(mi_2010_spat) + tm_fill("MOVEDNET", style='sd', palette='PiYG')
+```
+
+
+```{r}
+mi_2015_raw <- get_flows(geography = 'county subdivision',
+#                  breakdown = 'RACE',
+#                  breakdown_labels = TRUE,
+                  state = 'Mi',
+                  county = 'Cheboygan',
+                  output = 'wide',
+                  year=2013)
+
+mi_2015_sum <- mi_2015_raw |> 
+  group_by(GEOID1) |> 
+  summarize(MOVEDOUT_M = sum(MOVEDOUT_M, na.rm=TRUE),
+            MOVEDIN = sum(MOVEDIN, na.rm=TRUE),
+            MOVEDOUT = sum(MOVEDOUT, na.rm=TRUE),
+            MOVEDNET = sum(MOVEDNET, na.rm=TRUE),
+            MOVEDNET_M = sum(MOVEDNET_M, na.rm=TRUE))
+
+mi_2015_spat <- merge(csd, mi_2015_sum, by.x = 'GEOID', by.y = 'GEOID1')
+
+tm_shape(mi_2015_spat) + tm_fill("MOVEDNET", style='quantile', palette='PiYG')
+```
+
+
+```{r}
+mi_2020_raw <- get_flows(geography = 'county subdivision',
+#                  breakdown = 'RACE',
+#                  breakdown_labels = TRUE,
+                  state = 'MI',
+                  county = 'Cheboygan',
+                  output = 'wide',
+                  year=2020)
+
+mi_2020_sum <- mi_2020_raw |> 
+  group_by(GEOID1) |> 
+  summarize(MOVEDOUT_M = sum(MOVEDOUT_M, na.rm=TRUE),
+            MOVEDIN = sum(MOVEDIN, na.rm=TRUE),
+            MOVEDOUT = sum(MOVEDOUT, na.rm=TRUE),
+            MOVEDNET = sum(MOVEDNET, na.rm=TRUE),
+            MOVEDNET_M = sum(MOVEDNET_M, na.rm=TRUE))
+
+csd <- tigris::county_subdivisions(state="MI")
+
+mi_2020_spat <- merge(csd, mi_2020_sum, by.x = 'GEOID', by.y = 'GEOID1')
+
+tm_shape(mi_2020_spat) + tm_fill("MOVEDNET", style='sd', palette='PiYG')
+```
