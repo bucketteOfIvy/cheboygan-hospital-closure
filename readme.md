@@ -1,1 +1,1 @@
-This repository tracks a project conducted for GEOG 27014, a class focused on movement data and analysis. More info will be added to this page as the project progresses.
+This repository contains data and scripts used as part of a project for GISC 27104, a class focused on Movement Data and Analysis. The scripts included as of now are those used for data acquisition and cleaning. Final datasets and plots are also included; cleaned data analysis scripts are forthcoming.
